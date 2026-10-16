@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------
+# SECRETS
+#
+# server/.env holds the database URL and both JWT signing secrets. A
+# repository is the most common place a credential leaks from, and a
+# secret that has been committed is compromised even after it is
+# deleted, because it stays in the history.
+#
+# .env.example is committed on purpose: it documents which variables
+# exist without carrying a single real value.
+# ---------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------
+# DEPENDENCIES AND BUILD OUTPUT
+#
+# Both are reproducible from package-lock.json and the source. Committing
+# them makes every diff unreadable and the clone enormous.
+# ---------------------------------------------------------------------
+node_modules/
+client/dist/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------
+# LOCAL NOISE
+# ---------------------------------------------------------------------
+npm-debug.log*
+*.log
+coverage/
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Uploaded or generated artefacts that belong to a running instance,
+# not to the source.
+uploads/
+*.pdf
+!server/docs/**/*.pdf

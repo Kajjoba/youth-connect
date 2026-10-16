@@ -1,0 +1,13 @@
+-- ADR-028: a super-admin tier above admin.
+--
+-- Before this, every admin account was equal: any admin could promote
+-- any other user straight to admin, or demote an existing admin, with
+-- no one above that layer. That is fine for a one-person pilot and
+-- wrong for a real platform, where "who can make someone an
+-- administrator" needs to be its own, narrower permission.
+--
+-- This migration only adds the enum value. Postgres will not let a
+-- freshly added enum value be used in the same transaction that added
+-- it, so the promotion that depends on it lives in the next migration
+-- instead of being folded into this one.
+ALTER TYPE user_role ADD VALUE 'super_admin';

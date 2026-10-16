@@ -1,0 +1,25 @@
+{
+  "name": "ycp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YouthConnect Platform - MIT723 Web Application Engineering",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "setup": "npm install && npm --workspace server run db:migrate && npm --workspace server run db:seed",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev --workspace server",
+    "dev:web": "npm run dev --workspace client",
+    "build": "npm run build --workspace client",
+    "db:reset": "npm --workspace server run db:reset",
+    "measure": "bash server/docs/measure-bandwidth.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

@@ -1,0 +1,1708 @@
+/* =====================================================================
+   YouthConnect design tokens
+
+   DESIGN DECISION, superseding ADR-008/009 for this build only, by
+   explicit request: a "make it look exactly like Coursera" pass. That
+   means Coursera's actual type language (Roboto, loaded from Google
+   Fonts, see index.html) and Coursera's actual visual weight (custom
+   fonts, richer imagery, deeper shadows) rather than the bandwidth-
+   minimal system-font/no-framework approach those ADRs describe. The
+   hand-written-CSS-no-framework part of ADR-009 still holds: everything
+   below is still plain CSS, just spent on a different set of priorities.
+   If this ships to the low-bandwidth deployment this platform was
+   originally designed for, ADR-008's tradeoff should be revisited.
+
+   Palette: Coursera's own blue/navy/white system. #0056D2 is Coursera's
+   primary link/button blue; the darker navy is used for the header
+   wordmark treatment and dark hero bands; a warm star-yellow is added
+   ONLY for rating-style decoration, never for status (status still
+   means the same thing everywhere else: primary blue for current/live,
+   a green for complete, red for refused).
+   ===================================================================== */
+
+:root {
+  --paper:      #F5F5F5;
+  --surface:    #FFFFFF;
+  --ink:        #1F1F1F;
+  --muted:      #55606E;
+  --line:       #D6DCE5;
+  --primary:    #0056D2;
+  --primary-lo: #E7EFFD;
+  --meter:      #F5A623;
+  --alert:      #C6372F;
+  --alert-lo:   #FBEAE8;
+
+  /* ------------------------------------------------------------------
+     RICHER TOKENS, added on top of the base palette above rather than
+     replacing it. The base four (paper/primary/meter/alert) still carry
+     every semantic meaning in the app: complete, caution, refused. These
+     are for the places that were reading as flat because everything was
+     the same blue, the same gold, the same grey: a type badge on
+     Discover, a hero surface behind a headline, a moment of emphasis
+     that should not be confused with a status.
+     ------------------------------------------------------------------ */
+
+  /* A second and third stop for the brand blue, for gradients and for
+     text on a dark surface where --primary itself is too bright to
+     anchor a hero band. Coursera's own dark navy header/footer color. */
+  --primary-hi:   #2E6EE8;
+  --primary-deep: #00265C;
+  --on-primary:   #FFFFFF;
+
+  /* Success green, Coursera's "completed"/certificate color, kept
+     entirely separate from the primary blue so "enrolled/current" and
+     "done" never look like the same state. */
+  --success:      #00A66C;
+  --success-lo:   #E4F7EF;
+
+  /* The star/gold accent gets a brighter partner for shimmer and glow;
+     it never appears alone as a status color, only as a warm accent. */
+  --gold-hi:      #FFCB66;
+
+  /* Four accents used ONLY to tell one activity type from another on
+     Discover and on tags. They carry no status meaning anywhere else in
+     the app, so a course being purple never means "in progress" the way
+     the base palette's colors do. */
+  --type-course:      #0056D2;
+  --type-course-lo:   #E7EFFD;
+  --type-workshop:    #B7791F;
+  --type-workshop-lo: #FBF0DD;
+  --type-challenge:   #7C4DB0;
+  --type-challenge-lo:#F1E9F8;
+  --type-discussion:  #C1476B;
+  --type-discussion-lo:#FBEBF0;
+
+  /* Gradients, used sparingly: the auth screens, the course landing
+     hero band, and the certificate banner. Everywhere else stays flat,
+     because a gradient on every panel is exactly the flatness problem
+     with extra steps. */
+  --gradient-hero: linear-gradient(135deg, var(--primary-deep) 0%, #003C9E 50%, var(--primary) 100%);
+  --gradient-gold: linear-gradient(120deg, var(--meter) 0%, var(--gold-hi) 100%);
+
+  --shadow-card: 0 1px 2px rgba(15, 22, 35, .06), 0 10px 28px rgba(15, 22, 35, .10);
+  --shadow-glow: 0 0 0 4px rgba(0, 86, 210, .18);
+
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius: 8px;
+  --reading: 46rem;
+
+  /* Type scale, 1.25 ratio from a 1rem base. */
+  --text-xs: .75rem;
+  --text-sm: .875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.953rem;
+
+  /* Coursera pairs its grotesque sans with a slab serif for big display
+     headlines (course titles in a hero band, the "YouthConnect" wordmark
+     stacked large). Used sparingly, never for body copy. */
+  --font-display: "Roboto Slab", "Roboto", Georgia, serif;
+
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0; font-weight: 700; letter-spacing: -0.015em; }
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); letter-spacing: -0.01em; }
+p  { margin: 0 0 var(--space-3); max-width: 68ch; }
+
+a { color: var(--primary); text-underline-offset: 2px; }
+
+/* A visible focus ring everywhere. Participants using a keyboard or a
+   cheap phone with an unreliable touchscreen need to see where they are. */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Layout                                                            */
+/* ---------------------------------------------------------------- */
+
+.shell { display: flex; flex-direction: column; min-height: 100%; }
+
+.masthead {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.masthead-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex; align-items: center; gap: var(--space-4);
+}
+
+.brand-link { text-decoration: none; color: var(--ink); flex-shrink: 0; }
+
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); }
+.brand-mark { color: var(--primary); display: flex; }
+.brand-word {
+  font-weight: 700; font-size: 1.0625rem;
+  letter-spacing: -0.025em; white-space: nowrap;
+}
+.brand-word span { color: var(--primary); }
+
+.brand-stacked {
+  flex-direction: column; gap: var(--space-2);
+}
+.brand-stacked .brand-word { font-size: var(--text-lg); }
+
+/* Desktop navigation, inside the header. Previously this floated in a
+   detached white box below the masthead with no visual relationship to
+   anything, which is what made the page feel unresolved. */
+.nav-inline { display: none; gap: var(--space-1); }
+
+.nav-link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--text-sm); font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+.nav-link:hover { background: var(--paper); color: var(--ink); }
+.nav-link[aria-current="page"] {
+  background: var(--primary-lo); color: var(--primary); font-weight: 600;
+}
+
+.masthead-end {
+  margin-left: auto;
+  display: flex; align-items: center; gap: var(--space-3);
+}
+
+/* Account menu, using <details> so it needs no JavaScript and closes
+   on Escape for free. */
+.account { position: relative; }
+.account summary { list-style: none; cursor: pointer; }
+.account summary::-webkit-details-marker { display: none; }
+
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--primary-lo); color: var(--primary);
+  display: grid; place-items: center;
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: .02em;
+  border: 1px solid transparent;
+}
+.account[open] .avatar { border-color: var(--primary); }
+
+.account-menu {
+  position: absolute; right: 0; top: calc(100% + var(--space-2));
+  min-width: 12rem; z-index: 30;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  box-shadow: 0 6px 24px rgba(26, 30, 28, .1);
+}
+.account-name { font-weight: 600; margin: 0 0 2px; font-size: var(--text-sm); }
+.account-role {
+  margin: 0 0 var(--space-3); font-size: var(--text-xs);
+  color: var(--muted); text-transform: capitalize;
+}
+
+.account-menu-links {
+  display: grid; gap: 2px;
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+.account-menu-link {
+  display: block;
+  padding: var(--space-2);
+  margin: 0 calc(var(--space-2) * -1);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  text-decoration: none;
+}
+.account-menu-link:hover { background: var(--paper); color: var(--primary); }
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--reading);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+/* Bottom tabs on phones. Thumb reach beats elegance on a small screen
+   held one-handed. */
+.tabs {
+  position: sticky; bottom: 0; z-index: 20;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-decoration: none;
+  min-height: 52px;
+  justify-content: center;
+}
+.tab[aria-current="page"] { color: var(--primary); font-weight: 600; }
+
+@media (min-width: 48rem) {
+  .nav-inline { display: flex; }
+  .tabs { display: none; }
+  .main { padding-top: var(--space-6); }
+}
+
+/* ---------------------------------------------------------------- */
+/* Rows. Deliberately not cards: no shadow, no box per item. A list    */
+/* of twenty shadowed cards is visual noise and pushes content off a   */
+/* small screen.                                                      */
+/* ---------------------------------------------------------------- */
+
+.rows { border-top: 1px solid var(--line); }
+
+.row {
+  display: block;
+  padding: var(--space-4);
+  margin: 0 calc(var(--space-4) * -1);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+  border-left: 3px solid transparent;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+a.row:hover, a.row:focus-visible {
+  background: var(--surface);
+  border-left-color: var(--primary);
+}
+.row:hover .row-title, .row:focus-visible .row-title { color: var(--primary); }
+
+.row-title { font-weight: 650; font-size: 1.0625rem; margin: 0 0 var(--space-1); letter-spacing: -0.01em; }
+.row-summary {
+  color: var(--muted); font-size: var(--text-sm);
+  margin: 0 0 var(--space-2); max-width: 60ch;
+}
+.row-foot { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+
+.stack > * + * { margin-top: var(--space-4); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+
+.tag {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.tag-live { border-color: var(--primary); color: var(--primary); }
+
+.muted { color: var(--muted); font-size: var(--text-sm); }
+.numeric { font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- */
+/* Controls                                                          */
+/* ---------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;                   /* WCAG target size */
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--primary);
+  /* Coursera's buttons are fully rounded pills, not the app's own
+     8px card radius, so this gets its own token rather than reusing
+     --radius, which stays as the (smaller) card/panel corner. */
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit; font-weight: 700; font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+.btn:hover:not(:disabled) { background: #0047B3; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-quiet { background: transparent; color: var(--primary); }
+.btn-quiet:hover:not(:disabled) { background: var(--primary-lo); }
+
+.btn-plain {
+  background: transparent; color: var(--ink); border-color: var(--line);
+  font-weight: 600;
+}
+.btn-plain:hover:not(:disabled) { background: var(--paper); border-color: var(--muted); }
+
+.btn-block { width: 100%; }
+.btn-lg { min-height: 48px; padding: var(--space-2) var(--space-6); font-size: var(--text-md); }
+
+.field { display: block; margin-bottom: var(--space-4); }
+.field-label { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-1); }
+.field-hint { display: block; font-size: var(--text-xs); color: var(--muted); margin-bottom: var(--space-2); }
+
+.input, .select, .textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-md);        /* 16px stops iOS zooming on focus */
+}
+.textarea { min-height: 7rem; resize: vertical; line-height: 1.5; }
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 86, 210, .15);
+}
+.input[aria-invalid="true"] { border-color: var(--alert); }
+
+.field-error { display: block; color: var(--alert); font-size: var(--text-xs); margin-top: var(--space-1); }
+
+.choice {
+  display: flex; gap: var(--space-3); align-items: flex-start;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  background: var(--surface);
+}
+.choice:has(input:checked) { border-color: var(--primary); background: var(--primary-lo); }
+.choice input { margin-top: .3rem; width: 18px; height: 18px; accent-color: var(--primary); }
+
+/* ---------------------------------------------------------------- */
+/* Messages                                                          */
+/* ---------------------------------------------------------------- */
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+.notice-bad { border-color: var(--alert); background: var(--alert-lo); color: #8C2A22; }
+.notice-good { border-color: var(--primary); background: var(--primary-lo); color: #0047B3; }
+
+.banner {
+  background: var(--ink); color: #fff;
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  text-align: center;
+}
+.banner-offline { background: #5A4A12; }
+.banner-sync { background: var(--primary); }
+
+.empty { padding: var(--space-6) 0; text-align: center; }
+.empty h3 { margin-bottom: var(--space-2); }
+.empty p { margin-left: auto; margin-right: auto; color: var(--muted); }
+
+/* Skeletons rather than spinners for list views: they communicate the
+   shape of what is coming and stop the page jumping when it lands. */
+.skeleton {
+  background: linear-gradient(90deg, var(--line) 25%, #E9E7E0 37%, var(--line) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 3px;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+.spinner {
+  width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+  animation: spin 800ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.skip-link {
+  position: absolute; left: -9999px;
+  background: var(--ink); color: #fff;
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius);
+}
+.skip-link:focus { left: var(--space-3); top: var(--space-3); z-index: 50; }
+
+/* ---------------------------------------------------------------- */
+/* Sign in and register                                              */
+/* ---------------------------------------------------------------- */
+
+/*
+  DESIGN DECISION: replaced the single centered auth card with Coursera's
+  actual sign-in/register shape, a two-column split. Coursera puts a
+  colored brand panel with a headline on one side and a plain white form
+  on the other; a lone card floating on a pale wash (the previous
+  layout) reads as a generic SaaS template rather than that specific
+  pattern. The illustration column collapses above the form on a phone
+  rather than disappearing, so the brand moment survives on the device
+  most of this programme's participants actually use.
+*/
+.auth-shell {
+  min-height: 100%;
+  display: flex; flex-direction: column;
+}
+
+.auth-illustration {
+  background: var(--gradient-hero);
+  color: var(--on-primary);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-6) var(--space-5);
+  display: flex; flex-direction: column; justify-content: center;
+  gap: var(--space-4);
+}
+.auth-illustration::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(70% 100% at 85% 0%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(60% 90% at 0% 100%, rgba(0,0,0,.18), transparent 60%);
+  pointer-events: none;
+}
+.auth-illustration > * { position: relative; }
+.auth-illustration h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  max-width: 22rem;
+}
+.auth-illustration p { color: rgba(255,255,255,.85); max-width: 22rem; margin: 0; }
+
+.auth-illustration-points {
+  list-style: none; margin: var(--space-2) 0 0; padding: 0;
+  display: grid; gap: var(--space-3);
+}
+.auth-illustration-points li {
+  display: flex; gap: var(--space-2); align-items: flex-start;
+  color: rgba(255,255,255,.92); font-size: var(--text-sm);
+}
+.auth-illustration-points svg { flex-shrink: 0; margin-top: 2px; color: var(--gold-hi); }
+
+.auth-panel {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  gap: var(--space-4);
+  background: var(--paper);
+}
+
+.auth-card {
+  width: 100%; max-width: 25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: var(--space-6) var(--space-5);
+  box-shadow: var(--shadow-card);
+}
+
+.auth-head {
+  text-align: center;
+  margin-bottom: var(--space-5);
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--space-3);
+}
+.auth-head h1 { font-size: var(--text-xl); margin: 0; }
+.auth-head p { color: var(--muted); font-size: var(--text-sm); margin: 0; }
+
+.auth-alt {
+  margin: var(--space-5) 0 0;
+  text-align: center; font-size: var(--text-sm); color: var(--muted);
+}
+
+/* ADR-029: Sign in with Google. */
+.auth-oauth {
+  display: flex; justify-content: center;
+  margin-bottom: var(--space-4);
+}
+.google-signin-slot {
+  min-height: 40px;
+  display: flex; justify-content: center;
+}
+.auth-divider {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  color: var(--muted); font-size: var(--text-xs); text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+
+.auth-foot {
+  max-width: 25rem; text-align: center;
+  font-size: var(--text-xs); color: var(--muted);
+  margin: 0;
+}
+
+@media (min-width: 60rem) {
+  .auth-shell { flex-direction: row; }
+  .auth-illustration { flex: 0 0 42%; padding: var(--space-7); }
+  .auth-panel { flex: 1; }
+}
+
+/* Password reveal */
+.password-wrap { position: relative; display: flex; }
+.password-input { padding-right: 3rem; }
+
+.password-toggle {
+  position: absolute; right: 4px; top: 50%;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: transparent; border: 0; border-radius: var(--radius);
+  color: var(--muted); cursor: pointer;
+}
+.password-toggle:hover { color: var(--ink); background: var(--paper); }
+.password-toggle[aria-pressed="true"] { color: var(--primary); }
+
+/* ---------------------------------------------------------------- */
+/* Page headers                                                      */
+/* A consistent header gives each screen a clear entry point. Without */
+/* one, every page opened straight into a control panel and read as   */
+/* undifferentiated.                                                  */
+/* ---------------------------------------------------------------- */
+
+.page-head { margin-bottom: var(--space-5); }
+.page-head h1 { margin-bottom: var(--space-2); }
+.page-head p {
+  color: var(--muted); font-size: var(--text-sm);
+  margin: 0; max-width: 54ch;
+}
+
+/* ---------------------------------------------------------------- */
+/* Segmented control, avatar picker, discipline chips                */
+/* ---------------------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.segmented {
+  display: flex; gap: 2px;
+  background: var(--line);
+  border-radius: var(--radius);
+  padding: 2px;
+  margin-bottom: var(--space-4);
+}
+
+.segment {
+  flex: 1;
+  min-height: 40px;
+  border: 0; border-radius: 4px;
+  background: transparent;
+  font: inherit; font-size: var(--text-sm); font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+}
+.segment-on {
+  background: var(--surface);
+  color: var(--ink); font-weight: 600;
+  box-shadow: 0 1px 2px rgba(26, 30, 28, .08);
+}
+
+/* Avatar */
+.avatar-picker {
+  display: flex; gap: var(--space-4); align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.avatar-large {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: var(--primary-lo); color: var(--primary);
+  display: grid; place-items: center;
+  font-size: 1.75rem; font-weight: 700;
+  overflow: hidden; flex-shrink: 0;
+  border: 1px solid var(--line);
+}
+.avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+
+.avatar-controls { flex: 1 1 14rem; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.avatar-controls label.btn { cursor: pointer; }
+.avatar-note { flex-basis: 100%; margin: var(--space-1) 0 0; font-size: var(--text-xs); }
+
+/* Discipline chips */
+.picker { border: 0; padding: 0; margin: 0 0 var(--space-5); }
+.picker-count {
+  font-size: var(--text-xs); color: var(--muted);
+  margin: 0 0 var(--space-3); font-variant-numeric: tabular-nums;
+}
+.picker-group { margin-bottom: var(--space-4); }
+.picker-heading {
+  font-size: var(--text-xs); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); margin: 0 0 var(--space-2);
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.chip {
+  display: inline-flex; align-items: center;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.chip:hover { border-color: var(--primary); }
+.chip-on {
+  background: var(--primary-lo);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+.chip-off { opacity: .45; cursor: not-allowed; }
+.chip:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Urgent tag: work waiting, or a refused access attempt. Used sparingly
+   so that when it appears it actually means something. */
+.tag-urgent {
+  border-color: var(--alert);
+  color: var(--alert);
+  background: var(--alert-lo);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- */
+/* Course structure: modules and items                               */
+/* ---------------------------------------------------------------- */
+
+.module-toggle {
+  display: flex; align-items: baseline; gap: var(--space-2);
+  flex: 1; text-align: left;
+  background: transparent; border: 0; padding: 0;
+  font: inherit; cursor: pointer; color: inherit;
+}
+.module-title { font-weight: 600; flex: 1; }
+
+.item-row {
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+.item-row:first-of-type { border-top: 0; }
+
+.material-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+.material-list li {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+.material-name { flex: 1; word-break: break-word; }
+
+/* ---------------------------------------------------------------- */
+/* Course player                                                     */
+/*                                                                   */
+/* Sidebar plus content pane on a laptop; the sidebar becomes a      */
+/* drawer on a phone. A fixed sidebar on a 360px screen leaves about */
+/* 140px for the content, which is not a layout.                     */
+/* ---------------------------------------------------------------- */
+
+.player { display: block; }
+
+.player-drawer-toggle {
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.player-sidebar {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.player-sidebar-open { display: block; }
+
+.player-sidebar-head { margin-bottom: var(--space-4); }
+.player-course-title {
+  font-size: var(--text-md); font-weight: 700;
+  margin: var(--space-1) 0 var(--space-3);
+}
+
+.player-module { margin-bottom: var(--space-4); }
+.player-module-head {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-size: var(--text-sm); font-weight: 600;
+  margin: 0 0 var(--space-2);
+}
+
+.player-items { list-style: none; margin: 0; padding: 0 0 0 var(--space-1); }
+
+.player-item {
+  display: flex; align-items: flex-start; gap: var(--space-2);
+  width: 100%; text-align: left;
+  padding: var(--space-2);
+  background: transparent; border: 0; border-radius: var(--radius);
+  font: inherit; color: inherit; cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.player-item:hover { background: var(--paper); }
+.player-item-active {
+  background: var(--primary-lo);
+  border-left-color: var(--primary);
+}
+.player-item-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.player-item-title { font-size: var(--text-sm); }
+.player-item-meta { font-size: var(--text-xs); color: var(--muted); }
+
+.player-main { min-width: 0; }
+
+.reading {
+  font-size: 1.0625rem; line-height: 1.7;
+  max-width: 68ch;
+}
+
+.player-nav {
+  display: flex; justify-content: space-between; gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.tick { flex-shrink: 0; }
+
+/*
+  The completion checkmark as a small, satisfying event rather than a
+  state that simply appears. Two separate animations, because the two
+  elements are earned at slightly different moments: the circle fills
+  first (the mark was just recorded), then the check draws itself
+  inside it (confirming what filled). Both are one-shot mount
+  animations, not states, so they never replay on an ordinary re-render
+  and never run at all for an item that loads already complete.
+*/
+.tick-circle-pop { animation: tick-pop 320ms cubic-bezier(.34, 1.56, .64, 1); transform-origin: center; }
+@keyframes tick-pop {
+  0%   { transform: scale(.6); }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.tick-mark {
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+  animation: tick-draw 220ms ease-out 160ms forwards;
+}
+@keyframes tick-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (min-width: 60rem) {
+  .player {
+    display: grid;
+    grid-template-columns: 17rem 1fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .player-drawer-toggle { display: none; }
+  .player-sidebar {
+    display: block;
+    position: sticky;
+    top: calc(64px + var(--space-4));
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    margin-bottom: 0;
+  }
+}
+
+/* The reading column needs room; widen the shell on the player only. */
+@media (min-width: 60rem) {
+  .main:has(.player) { max-width: 72rem; }
+}
+
+/* A text-heavy page (a form, a settings panel) reads best in a narrow
+   column, which is why .main stays at --reading width by default. A
+   card grid is the opposite: it exists to use the space a wide screen
+   actually has, and squeezed into 46rem it renders as a single
+   unstyled-looking stack with a huge empty margin either side, which is
+   exactly what looked wrong here. Widen the shell to match the header's
+   own width whenever the page holds one of the grids. */
+@media (min-width: 60rem) {
+  .main:has(.course-grid), .main:has(.learning-grid) { max-width: 76rem; }
+}
+
+/* ---------------------------------------------------------------- */
+/* Certificates                                                      */
+/* ---------------------------------------------------------------- */
+
+.certificate-banner {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  background: var(--primary-lo);
+}
+.certificate-banner h2 { font-size: var(--text-lg); margin-bottom: var(--space-2); }
+
+.cert-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--meter);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+.cert-card-revoked { border-left-color: var(--alert); opacity: .75; }
+
+.cert-code {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: var(--space-3);
+  background: var(--paper);
+  border-radius: var(--radius);
+}
+.cert-code strong { font-size: 1.0625rem; letter-spacing: .06em; }
+
+/* ---------------------------------------------------------------- */
+/* Public verification                                               */
+/* ---------------------------------------------------------------- */
+
+.verify-page {
+  min-height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  gap: var(--space-4);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(0,86,210,.10), transparent 60%),
+    radial-gradient(90% 50% at 100% 110%, rgba(245,166,35,.10), transparent 60%),
+    var(--paper);
+}
+
+.verify-card { animation: card-in 360ms cubic-bezier(.2,.7,.3,1); }
+@media (prefers-reduced-motion: reduce) { .verify-card { animation: none; } }
+
+.verify-card {
+  width: 100%; max-width: 30rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: var(--space-6) var(--space-5);
+}
+
+.verify-result {
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.verify-valid { background: var(--primary-lo); border: 2px solid var(--primary); }
+.verify-invalid { background: var(--alert-lo); border: 2px solid var(--alert); }
+
+.verify-result h2 {
+  font-size: var(--text-sm); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: var(--space-3);
+}
+.verify-valid h2 { color: var(--primary); }
+.verify-invalid h2 { color: var(--alert); }
+
+.verify-name { font-size: var(--text-xl); font-weight: 700; margin: 0 0 var(--space-1); }
+.verify-course { margin: 0 0 var(--space-4); }
+
+.verify-facts {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  margin: 0; text-align: left;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.verify-facts dt {
+  font-size: var(--text-xs); color: var(--muted);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.verify-facts dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- */
+/* Course landing page                                               */
+/*                                                                   */
+/* Reachable signed out, so it carries its own minimal header. The   */
+/* enrol panel sticks on a laptop and sits near the top on a phone:  */
+/* the decision should not be eight scrolls from the thing it is     */
+/* about.                                                             */
+/* ---------------------------------------------------------------- */
+
+.landing { min-height: 100%; background: var(--paper); }
+
+.landing-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.landing-body {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  display: flex; flex-direction: column;
+  gap: var(--space-5);
+}
+
+.landing-head h1 {
+  font-size: 1.75rem;
+  margin-bottom: var(--space-2);
+}
+.landing-summary {
+  font-size: 1.0625rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.landing-facts {
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+.landing-fact-value { font-weight: 650; font-variant-numeric: tabular-nums; }
+.landing-fact-label {
+  font-size: var(--text-xs); color: var(--muted);
+  margin-top: 2px;
+}
+
+.landing-section {
+  padding-top: var(--space-5);
+  margin-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+.landing-section h2 { font-size: 1.25rem; margin-bottom: var(--space-3); }
+
+.outcomes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.outcomes li { display: flex; gap: var(--space-2); align-items: flex-start; }
+.outcomes li svg { flex-shrink: 0; margin-top: 3px; }
+
+.plain-list { margin: 0; padding-left: 1.25rem; color: var(--muted); }
+.plain-list li { margin-bottom: var(--space-1); }
+
+/* Syllabus */
+.syllabus-module { border-bottom: 1px solid var(--line); }
+.syllabus-module:first-of-type { border-top: 1px solid var(--line); }
+
+.syllabus-toggle {
+  display: flex; align-items: center; gap: var(--space-2);
+  width: 100%; text-align: left;
+  padding: var(--space-3) 0;
+  background: transparent; border: 0;
+  font: inherit; color: inherit; cursor: pointer;
+}
+.syllabus-title { flex: 1; font-weight: 600; }
+.syllabus-chevron {
+  display: inline-block; font-size: 1.125rem; color: var(--muted);
+  transition: transform 140ms ease;
+}
+.syllabus-chevron[data-open="true"] { transform: rotate(90deg); }
+
+.syllabus-items {
+  list-style: none; margin: 0 0 var(--space-3);
+  padding: 0 0 0 var(--space-5);
+  display: grid; gap: var(--space-2);
+}
+.syllabus-items li {
+  display: flex; align-items: center; gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+}
+.syllabus-icon { color: var(--muted); flex-shrink: 0; }
+.syllabus-item-title { flex: 1 1 14rem; }
+.syllabus-item-meta { font-size: var(--text-xs); }
+
+/* Facilitator */
+.instructor { display: flex; gap: var(--space-3); align-items: flex-start; }
+.instructor-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--primary-lo); color: var(--primary);
+  display: grid; place-items: center;
+  font-weight: 700; flex-shrink: 0; overflow: hidden;
+}
+.instructor-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Enrol panel */
+.enrol-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: var(--space-5);
+}
+.enrol-state { font-weight: 600; margin-bottom: var(--space-3); }
+
+.enrol-facts {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  display: grid; gap: var(--space-2);
+}
+.enrol-facts > div { display: flex; justify-content: space-between; gap: var(--space-3); }
+.enrol-facts dt { color: var(--muted); font-size: var(--text-sm); }
+.enrol-facts dd {
+  margin: 0; font-weight: 600; font-size: var(--text-sm);
+  text-transform: capitalize; text-align: right;
+}
+
+.enrol-data {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-xs); color: var(--muted);
+}
+
+@media (min-width: 60rem) {
+  .landing-body {
+    display: grid;
+    grid-template-columns: 1fr 19rem;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .landing-aside { position: sticky; top: var(--space-5); }
+}
+
+/* ---------------------------------------------------------------- */
+/* Timeline, grades, objectives                                      */
+/*                                                                   */
+/* The timeline language is deliberate. Never "late", which judges   */
+/* the person; "behind your suggested pace", which describes a       */
+/* suggestion. See ADR-020.                                          */
+/* ---------------------------------------------------------------- */
+
+.timeline-head { font-size: var(--text-sm); font-weight: 700; margin: 0; }
+
+.timeline-list { list-style: none; margin: 0; padding: 0; }
+
+.timeline-item {
+  display: flex; gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  position: relative;
+}
+.timeline-item:not(:last-child)::before {
+  content: ''; position: absolute;
+  left: 5px; top: 14px; bottom: 0;
+  width: 2px; background: var(--line);
+}
+
+.timeline-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--line); background: var(--surface);
+  flex-shrink: 0; margin-top: 3px; z-index: 1;
+}
+.timeline-done .timeline-dot { background: var(--primary); border-color: var(--primary); }
+.timeline-behind .timeline-dot { border-color: var(--meter); background: var(--meter); }
+
+.timeline-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.timeline-title { font-size: var(--text-sm); }
+.timeline-done .timeline-title { color: var(--muted); }
+.timeline-meta { font-size: var(--text-xs); color: var(--muted); }
+.timeline-behind .timeline-meta { color: #8A6D1F; font-weight: 600; }
+
+/* Grades table */
+.grades {
+  width: 100%; border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: var(--text-sm);
+}
+.grades th {
+  text-align: left; font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); font-weight: 600;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+.grades td { padding: var(--space-3); border-bottom: 1px solid var(--line); vertical-align: top; }
+.grades tr:last-child td { border-bottom: 0; }
+.grades .numeric { text-align: right; font-variant-numeric: tabular-nums; }
+.grades th.numeric { text-align: right; }
+
+.grade-title { display: block; font-weight: 600; }
+.grade-sub {
+  display: block; font-size: var(--text-xs);
+  color: var(--muted); text-transform: capitalize;
+}
+
+/* A table is unreadable at 360px, so it stacks into cards. */
+@media (max-width: 40rem) {
+  .grades thead { display: none; }
+  .grades, .grades tbody, .grades tr, .grades td { display: block; width: 100%; }
+  .grades tr {
+    border-bottom: 1px solid var(--line);
+    padding: var(--space-3) 0;
+  }
+  .grades td { border: 0; padding: 2px var(--space-3); }
+  .grades .numeric { text-align: left; }
+}
+
+/* Module objectives on the landing page */
+.module-objectives {
+  padding: 0 0 var(--space-3) var(--space-5);
+}
+.module-objectives h4 {
+  font-size: var(--text-xs); text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted);
+  margin: 0 0 var(--space-2);
+}
+.module-objectives ul { margin: 0; padding-left: 1.125rem; font-size: var(--text-sm); }
+.module-objectives li { margin-bottom: var(--space-1); }
+
+/* A skill chip is a label, not a control. */
+.chip-static { cursor: default; }
+.chip-static:hover { border-color: var(--line); }
+
+/* =====================================================================
+   MOTION
+   Paired with src/lib/motion.js. Every animation here has a
+   prefers-reduced-motion escape hatch: the hooks skip straight to the
+   end state, and the CSS below removes transitions and animations
+   globally in that case (see the existing @media block near the top).
+   ===================================================================== */
+
+/* Reveal-on-scroll. .reveal starts hidden/offset; .reveal-in is added by
+   useReveal once the element has actually entered the viewport. A
+   --reveal-delay custom property lets a list stagger itself without a
+   separate class per index. */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 420ms ease, transform 420ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-in { opacity: 1; transform: translateY(0); }
+
+/* Press ripple. A single .ripple span is appended to whatever was
+   pressed (see attachRipple in motion.js) and removes itself when its
+   own animation ends, so there is never more than a couple of these in
+   the document at once. */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple-out 520ms ease-out;
+}
+.btn-quiet .ripple, .btn-plain .ripple, .chip .ripple, .nav-link .ripple, .tab .ripple, .segment .ripple {
+  background: rgba(0, 86, 210, .16);
+}
+@keyframes ripple-out {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* Buttons get weight and a little lift instead of a flat color swap.
+   The lift is 1px, not a floating-card 8px: enough to read as feedback
+   on a screen you are actually holding, not so much that scrolling past
+   a row of buttons feels like a fairground. */
+/*
+   DEFECT, caught by opening the page rather than reading the CSS.
+
+   This rule originally read plain `.btn`, appended after the `.btn`
+   modifiers (btn-quiet, btn-plain) earlier in this file. Equal
+   specificity, later source order: it won. Every quiet and plain button
+   in the app, including "Sign in" on the very first page a stranger
+   sees, got the solid brand-green gradient background painted over
+   its transparent one, with the modifier's dark green TEXT color still
+   applied on top: dark green on dark green, unreadable.
+
+   Scoped to exclude the two modifiers, so the lift-and-glow treatment
+   below reaches only the solid brand button it was written for, and a
+   quiet or plain button keeps the background its own class sets.
+*/
+.btn:not(.btn-quiet):not(.btn-plain) {
+  background: var(--gradient-hero);
+  border-color: var(--primary-deep);
+  box-shadow: 0 1px 2px rgba(0, 38, 92, .25);
+}
+.btn { transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease, background 140ms ease; will-change: transform; }
+.btn:not(.btn-quiet):not(.btn-plain):hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(0, 38, 92, .28);
+}
+.btn:hover:not(:disabled) { transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: translateY(0); filter: brightness(.97); }
+.btn:focus-visible { box-shadow: var(--shadow-glow); }
+
+/* Type badges on Discover and the landing page. These are the only
+   place four extra colors are used at once, which is deliberate: it
+   turns a list of identical grey pills into something scannable by
+   shape of color, while every OTHER tag in the app stays on the base
+   two-color status language (plain, or --primary for "live"/"current"). */
+.tag-type-course     { border-color: var(--type-course);     color: var(--type-course);     background: var(--type-course-lo); }
+.tag-type-workshop    { border-color: var(--type-workshop);   color: var(--type-workshop);   background: var(--type-workshop-lo); }
+.tag-type-challenge   { border-color: var(--type-challenge);  color: var(--type-challenge);  background: var(--type-challenge-lo); }
+.tag-type-discussion  { border-color: var(--type-discussion); color: var(--type-discussion); background: var(--type-discussion-lo); }
+
+/* Progress fill picks up the gold gradient and gets a brief shimmer
+   sweep the moment it reaches 100%, so completing something registers
+   as a small event rather than a bar simply stopping. */
+.progress-fill {
+  background: var(--gradient-gold);
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill[data-complete="true"]::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+  background-size: 250% 100%;
+  animation: sweep 1100ms ease-out 1;
+}
+@keyframes sweep {
+  from { background-position: 130% 0; }
+  to   { background-position: -30% 0; }
+}
+
+/* Rows lift very slightly on hover in addition to the existing
+   background/border-color change, so a list of activities feels like a
+   stack of things you can pick up rather than flat text with a hitbox. */
+.row {
+  transition: background 120ms ease, border-color 120ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+a.row:hover, a.row:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Hero surfaces: the auth screens, the verify card header, and the
+   certificate banner. Used in exactly these three places; everywhere
+   else stays the flat surface color on purpose. */
+.hero-surface {
+  background: var(--gradient-hero);
+  color: var(--on-primary);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-surface::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 90% at 15% -10%, rgba(255,203,102,.20), transparent 55%),
+    radial-gradient(90% 70% at 110% 110%, rgba(255,255,255,.10), transparent 60%);
+  pointer-events: none;
+}
+.hero-surface > * { position: relative; }
+
+/* Certificate banner and cards get the treatment: a card that just
+   handed someone a credential is the one moment in the app allowed to
+   look a little triumphant. */
+.certificate-banner {
+  background: var(--gradient-hero);
+  color: var(--on-primary);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+.certificate-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(140% 100% at 10% -20%, rgba(255,203,102,.28), transparent 55%);
+  pointer-events: none;
+}
+.certificate-banner > * { position: relative; }
+.certificate-banner h2 { color: var(--on-primary); }
+.certificate-banner a, .certificate-banner p { color: var(--on-primary); }
+
+.cert-card {
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  border-left-width: 5px;
+  border-image: var(--gradient-gold) 1;
+}
+.cert-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+
+/* Chips get a touch more presence on selection: a soft glow rather than
+   just a border-color swap, so choosing a discipline feels like a
+   deliberate pick, not a checkbox. */
+.chip-on { box-shadow: 0 0 0 3px rgba(0, 86, 210, .12); }
+
+/* Segmented control indicator slides rather than snapping; the layout
+   already handles which segment is "on", this just eases the color and
+   shadow change that was previously instant. */
+.segment { transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease; }
+
+/* Auth card gets a soft entrance instead of appearing mid-layout. */
+.auth-card {
+  animation: card-in 360ms cubic-bezier(.2,.7,.3,1);
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-card { animation: none; }
+}
+
+/* The stat figures on Progress count up via JS (useCountUp); this just
+   keeps the digits from jumping in width as they change. */
+.stat-value { font-variant-numeric: tabular-nums; }
+
+/* =====================================================================
+   COURSERA-STYLE REDESIGN
+
+   Everything below is additive: it restyles existing structure (the
+   header, the row list, the enrol card) into Coursera's visual language
+   rather than rewriting the app's markup wholesale. Where a genuinely
+   different shape was needed (a card grid instead of a text-row list,
+   a dark hero band, a footer) new classes were added and the two pages
+   that needed them (Discover, ProgressPage, CourseLanding) were updated
+   to use them.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------- */
+/* Header: Coursera's flat white nav with a search pill and a taller,  */
+/* bolder wordmark than the original quiet header.                    */
+/* ---------------------------------------------------------------- */
+
+.masthead {
+  box-shadow: 0 1px 0 rgba(15, 22, 35, .06);
+}
+.masthead-inner { max-width: 76rem; padding: var(--space-3) var(--space-5); }
+
+.brand-word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  border-radius: 0;
+  padding: var(--space-3) var(--space-2);
+  position: relative;
+}
+.nav-link[aria-current="page"] {
+  background: transparent;
+  color: var(--primary);
+}
+.nav-link[aria-current="page"]::after {
+  content: '';
+  position: absolute; left: var(--space-2); right: var(--space-2); bottom: 0;
+  height: 3px; border-radius: 2px 2px 0 0;
+  background: var(--primary);
+}
+.nav-link:hover { background: transparent; color: var(--primary); }
+
+.nav-search {
+  display: none;
+  align-items: center; gap: var(--space-2);
+  flex: 1 1 20rem; max-width: 24rem;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  margin: 0 var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.nav-search span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-search:hover, .nav-search:focus-visible {
+  border-color: var(--primary);
+  background: var(--surface);
+  color: var(--ink);
+}
+@media (min-width: 64rem) {
+  .nav-search { display: inline-flex; }
+}
+
+.account .avatar {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------- */
+/* Course card grid, Coursera's catalogue layout: a colour-banded      */
+/* thumbnail (standing in for a course image, since none is uploaded), */
+/* organisation line, title, and a meta row, in a responsive grid      */
+/* rather than the original single-column text row list.               */
+/* ---------------------------------------------------------------- */
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  gap: var(--space-5);
+}
+
+.course-card {
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-card);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.course-card:hover, .course-card:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(15, 22, 35, .08), 0 16px 32px rgba(15, 22, 35, .14);
+  border-color: var(--line);
+}
+
+.course-card-banner {
+  position: relative;
+  height: 6.5rem;
+  display: flex; align-items: flex-end;
+  padding: var(--space-3);
+  overflow: hidden;
+}
+.course-card-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 140% at 100% -20%, rgba(255,255,255,.22), transparent 60%),
+    radial-gradient(90% 120% at -10% 120%, rgba(0,0,0,.16), transparent 60%);
+}
+.course-card-banner-course     { background: linear-gradient(135deg, var(--type-course) 0%, #0033A0 100%); }
+.course-card-banner-workshop   { background: linear-gradient(135deg, var(--type-workshop) 0%, #7A4E10 100%); }
+.course-card-banner-challenge  { background: linear-gradient(135deg, var(--type-challenge) 0%, #4E2E72 100%); }
+.course-card-banner-discussion { background: linear-gradient(135deg, var(--type-discussion) 0%, #7A2647 100%); }
+
+.course-card-banner-icon {
+  position: relative; color: rgba(255,255,255,.92);
+}
+
+.course-card-body { flex: 1; display: flex; flex-direction: column; padding: var(--space-4); }
+.course-card-org {
+  font-size: var(--text-xs); color: var(--muted);
+  margin: 0 0 var(--space-1);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.course-card-title {
+  font-weight: 700; font-size: 1rem; line-height: 1.3;
+  margin: 0 0 var(--space-2);
+  /* Clamp to two lines so a long title never makes one card taller
+     than its neighbours in the same row. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.course-card-summary {
+  font-size: var(--text-sm); color: var(--muted);
+  margin: 0 0 var(--space-3);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.course-card-foot {
+  margin-top: auto;
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  padding-top: var(--space-2);
+}
+.course-card-stars {
+  display: inline-flex; align-items: center; gap: 3px;
+  color: var(--meter);
+  font-size: var(--text-xs); font-weight: 700;
+}
+.course-card-stars svg { display: block; }
+
+/* ---------------------------------------------------------------- */
+/* Hero band on the course landing page: Coursera's dark navy intro    */
+/* section behind the title and key facts, full width of the viewport  */
+/* even though the content column beneath it stays centred.            */
+/* ---------------------------------------------------------------- */
+
+.hero-band {
+  background: var(--gradient-hero);
+  color: var(--on-primary);
+  position: relative;
+  overflow: hidden;
+}
+.hero-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(60% 140% at 90% 0%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(50% 100% at 10% 120%, rgba(0,0,0,.20), transparent 60%);
+  pointer-events: none;
+}
+.hero-band-inner {
+  position: relative;
+  max-width: 76rem; margin: 0 auto;
+  padding: var(--space-7) var(--space-5) var(--space-6);
+}
+.hero-band h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  max-width: 42rem;
+}
+.hero-band .landing-summary { color: rgba(255,255,255,.85); max-width: 42rem; }
+.hero-band .tag {
+  border-color: rgba(255,255,255,.4); color: var(--on-primary); background: rgba(255,255,255,.1);
+}
+.hero-band .tag-live { border-color: var(--gold-hi); color: var(--gold-hi); background: rgba(255,203,102,.14); }
+.hero-band .landing-fact-value { color: var(--on-primary); }
+.hero-band .landing-fact-label { color: rgba(255,255,255,.7); }
+.hero-band .landing-facts { border-top-color: rgba(255,255,255,.25); }
+
+/* Body copy below the hero keeps a plain light background, unchanged
+   from the original layout, so only the introduction gets the treatment. */
+.landing-body { padding-top: var(--space-6); }
+
+/* ---------------------------------------------------------------- */
+/* Footer: Coursera's dense multi-column footer. Used on the pages a   */
+/* signed-out visitor can reach (the course landing page), which is    */
+/* also where Coursera itself shows one.                               */
+/* ---------------------------------------------------------------- */
+
+.site-footer {
+  margin-top: var(--space-7);
+  background: var(--primary-deep);
+  color: rgba(255,255,255,.72);
+}
+.site-footer-inner {
+  max-width: 76rem; margin: 0 auto;
+  padding: var(--space-7) var(--space-5) var(--space-6);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+}
+@media (min-width: 48rem) {
+  .site-footer-inner { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.site-footer-col h4 {
+  color: #fff; font-size: var(--text-sm); font-weight: 700;
+  margin: 0 0 var(--space-3);
+}
+.site-footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.site-footer-col a { color: rgba(255,255,255,.72); font-size: var(--text-sm); text-decoration: none; }
+.site-footer-col a:hover { color: #fff; text-decoration: underline; }
+.site-footer-base {
+  border-top: 1px solid rgba(255,255,255,.14);
+  max-width: 76rem; margin: 0 auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex; flex-wrap: wrap; gap: var(--space-3);
+  align-items: center; justify-content: space-between;
+  font-size: var(--text-xs); color: rgba(255,255,255,.55);
+}
+.site-footer-brand { display: flex; align-items: center; gap: var(--space-2); color: #fff; }
+
+/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- */
+/* Video placeholder in the course player: this platform hosts video    */
+/* externally rather than serving it itself (see the cost notice in     */
+/* ItemBody), so there is no actual player to embed. A dark 16:9 band   */
+/* with a play glyph stands in for one, matching what Coursera's own    */
+/* learning view looks like before a video has loaded.                  */
+/* ---------------------------------------------------------------- */
+
+.video-placeholder {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #0B1220 0%, #101B33 60%, #0B1220 100%);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+.video-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(60% 80% at 30% 20%, rgba(0,86,210,.35), transparent 60%);
+}
+.video-placeholder-play {
+  position: relative;
+  width: 4rem; height: 4rem; border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  border: 2px solid rgba(255,255,255,.5);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  transition: background 140ms ease, transform 140ms ease;
+}
+.video-placeholder:hover .video-placeholder-play {
+  background: rgba(255,255,255,.2);
+  transform: scale(1.05);
+}
+
+/* Certificate cards get a Coursera "accomplishment" ribbon edge, in    */
+/* the success green rather than the gold used for progress, so a      */
+/* finished credential and an in-progress meter never share a hue.     */
+/* ---------------------------------------------------------------- */
+
+.cert-card {
+  border-left-color: var(--success);
+  border-image: none;
+}
+.cert-card:not(.cert-card-revoked) .cert-code strong { color: var(--success); }
+
+/* ---------------------------------------------------------------- */
+/* "My Learning" card grid on the Progress page: Coursera's dashboard   */
+/* of in-progress courses, each with its own progress bar and a         */
+/* Continue button, instead of a single flat list.                      */
+/* ---------------------------------------------------------------- */
+
+.learning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--space-5);
+}
+
+.learning-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.learning-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(15, 22, 35, .08), 0 16px 32px rgba(15, 22, 35, .14); }
+
+.learning-card-title {
+  text-decoration: none; color: inherit;
+  font-weight: 700; font-size: 1.0625rem; line-height: 1.3;
+}
+.learning-card-title:hover { color: var(--primary); }
+
+.learning-card-cta {
+  margin-top: auto;
+  display: flex; justify-content: flex-end;
+}

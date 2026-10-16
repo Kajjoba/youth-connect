@@ -1,0 +1,37 @@
+{
+  "name": "ycp-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YouthConnect Platform API - MIT723 Web Application Engineering",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:migrate": "node db/migrate.js",
+    "db:seed": "node db/seed.js",
+    "db:doctor": "node db/doctor.js",
+    "db:reset": "node db/migrate.js --reset && node db/migrate.js && node db/seed.js",
+    "test": "node --test --test-concurrency=1",
+    "test:security": "node --test tests/access-control.test.js",
+    "test:reliability": "node --test tests/reliability.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "google-auth-library": "^9.15.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pdfkit": "^0.15.0",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
+  }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0056D2" />
+    <meta name="description" content="Learning and collaboration for young people across East Africa." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <!--
+      DESIGN DECISION (supersedes ADR-008 by explicit request): a Coursera-
+      style redesign calls for Coursera's own type language, so this build
+      trades the system-font budget for Roboto, loaded with a preconnect
+      to keep the extra round trip as cheap as it can be. ADR-008's
+      reasoning still holds for a low-bandwidth deployment; it is simply
+      not the goal of this particular build.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet" />
+    <!--
+      ADR-029: Sign in with Google. Loaded async/defer so it never blocks
+      the app shell, and loaded unconditionally because it costs nothing
+      until a component actually calls window.google.accounts.id - a
+      deployment with no Google client id configured just never makes
+      that call, and the button component itself checks for that and
+      renders nothing instead of a broken one.
+    -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>YouthConnect</title>
+    <!--
+      Critical shell styles are inlined so the page has a background and
+      a centred loading state before the JavaScript bundle arrives. On a
+      slow connection that gap can be several seconds, and a blank white
+      screen reads as a broken app.
+    -->
+    <style>
+      :root { color-scheme: light; }
+      html, body, #root { height: 100%; }
+      body {
+        margin: 0;
+        background: #F5F5F5;
+        color: #1F1F1F;
+        font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .boot {
+        display: grid; place-items: center; height: 100%;
+        gap: .75rem; padding: 2rem; text-align: center;
+      }
+      .boot p { color: #5A6473; font-size: .875rem; margin: 0; }
+      .boot-mark {
+        width: 2.5rem; height: 2.5rem; border-radius: 50%;
+        border: 3px solid #D6E0F5; border-top-color: #0056D2;
+        animation: boot-spin 900ms linear infinite;
+      }
+      @keyframes boot-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-mark { animation: none; border-top-color: #D6E0F5; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot">
+        <div class="boot-mark" role="presentation"></div>
+        <p>Loading YouthConnect</p>
+      </div>
+    </div>
+    <noscript>
+      <p style="padding:2rem;max-width:34rem;margin:0 auto">
+        YouthConnect needs JavaScript to run. Turn it on in your browser
+        settings, then reload this page.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
