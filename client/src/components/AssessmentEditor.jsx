@@ -34,6 +34,7 @@ function blankAssessment() {
     maxScore: 100,
     passScore: 50,
     maxAttempts: 1,
+    isFinal: false,
     questions: [blankQuestion()]
   };
 }
@@ -47,6 +48,7 @@ function toForm(assessment) {
     maxScore: Number(assessment.max_score),
     passScore: Number(assessment.pass_score),
     maxAttempts: Number(assessment.max_attempts),
+    isFinal: Boolean(assessment.is_final),
     questions: assessment.questions.length
       ? assessment.questions.map((q) => ({
           prompt: q.prompt,
@@ -98,7 +100,14 @@ export function AssessmentPanel({ activityId, assessments, onChange }) {
             <div className="row" key={assessment.id}>
               <div className="between" style={{ alignItems: 'flex-start' }}>
                 <div>
-                  <h3 className="row-title" style={{ fontSize: '1rem' }}>{assessment.title}</h3>
+                  <h3 className="row-title" style={{ fontSize: '1rem' }}>
+                    {assessment.title}
+                    {assessment.is_final && (
+                      <span className="tag tag-live" style={{ marginLeft: '.5rem' }}>
+                        Final quiz
+                      </span>
+                    )}
+                  </h3>
                   <span className="muted">
                     {assessment.questions.length} question{assessment.questions.length === 1 ? '' : 's'}
                     {' · '}pass {assessment.pass_score}/{assessment.max_score}
@@ -188,6 +197,7 @@ function AssessmentForm({ activityId, assessment, onDone, onCancel }) {
         maxScore: Number(form.maxScore),
         passScore: Number(form.passScore),
         maxAttempts: Number(form.maxAttempts),
+        isFinal: form.isFinal,
         questions: form.questions.map((q) => ({
           prompt: q.prompt,
           options: q.options,
@@ -248,6 +258,22 @@ function AssessmentForm({ activityId, assessment, onDone, onCancel }) {
           />
         </Field>
       </div>
+
+      <label className="choice">
+        <input
+          type="checkbox" checked={form.isFinal}
+          onChange={(e) => updateField('isFinal', e.target.checked)}
+        />
+        <span>
+          <strong style={{ display: 'block' }}>Final quiz</strong>
+          <span className="muted">
+            The capstone test for this course. Passing it is what unlocks
+            the certificate, instead of needing every quiz passed.
+            Checking this unchecks it on any other quiz in this course,
+            since only one can be final.
+          </span>
+        </span>
+      </label>
 
       <h3 style={{ fontSize: '1rem', margin: '1rem 0 0' }}>Questions</h3>
 
