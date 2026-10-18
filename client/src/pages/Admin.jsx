@@ -315,8 +315,8 @@ function People() {
                       )}
                     </div>
                   </div>
-                  <span className={`tag${person.status === 'suspended' || person.status === 'deactivated' ? ' tag-urgent' : ''}`}>
-                    {person.status === 'deactivated' ? 'removed' : person.status}
+                  <span className={`tag${person.status === 'suspended' ? ' tag-urgent' : ''}`}>
+                    {person.status}
                   </span>
                 </div>
 
@@ -359,54 +359,13 @@ function People() {
                     <button
                       type="button"
                       className="btn btn-plain"
-                      disabled={busyId === person.id || locked || person.status === 'deactivated'}
+                      disabled={busyId === person.id || locked}
                       onClick={() => change(person.id, {
                         status: person.status === 'suspended' ? 'active' : 'suspended'
                       })}
                     >
                       {person.status === 'suspended' ? 'Restore' : 'Suspend'}
                     </button>
-
-                    {/*
-                      "Delete" isn't really what anyone wants once a
-                      person has enrolments, submissions or a
-                      certificate tied to their id — removing the row
-                      would either break those records or silently
-                      delete someone else's grading history. Deactivate
-                      is the real, already-audited version of "remove
-                      this participant": it revokes their sessions and
-                      blocks sign-in, same as the account being gone,
-                      without destroying what they did here. Restoring
-                      is still possible from the role/status menu by a
-                      super admin if this was done by mistake.
-                    */}
-                    {person.status !== 'deactivated' ? (
-                      <button
-                        type="button"
-                        className="btn btn-plain"
-                        disabled={busyId === person.id || locked}
-                        onClick={() => {
-                          const name = person.full_name ?? person.email;
-                          if (window.confirm(
-                            `Remove ${name}? They will be signed out and unable to sign back in. `
-                            + 'Their enrolments and submissions are kept, and a super admin can restore the account later.'
-                          )) {
-                            change(person.id, { status: 'deactivated' });
-                          }
-                        }}
-                      >
-                        Remove
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="btn btn-plain"
-                        disabled={busyId === person.id || locked}
-                        onClick={() => change(person.id, { status: 'active' })}
-                      >
-                        Restore
-                      </button>
-                    )}
 
                     {locked && (
                       <span className="muted" style={{ fontSize: '.8rem' }}>

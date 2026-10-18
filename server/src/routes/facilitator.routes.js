@@ -224,11 +224,6 @@ const assessmentSchema = z.object({
   passScore: z.number().min(0).max(1000).default(50),
   maxAttempts: z.number().int().min(1).max(10).default(1),
   dueAt: z.string().datetime().optional(),
-  // The capstone quiz for the course: passing it is what the
-  // certificate is gated on (migration 015). At most one per
-  // activity; the routes below unset any previous one rather than
-  // relying on the database to reject a second.
-  isFinal: z.boolean().default(false),
   questions: z.array(z.object({
     prompt: z.string().min(3).max(2000),
     options: z.array(z.object({
@@ -267,25 +262,13 @@ router.post(
     }
 
     const assessment = await withTransaction(async (client) => {
-      // Only one capstone quiz per activity. Unsetting the previous
-      // one here, inside the same transaction, means checking the box
-      // on a new quiz is "make this the final one" rather than an
-      // error telling the facilitator to go remove the old flag
-      // themselves first.
-      if (b.isFinal) {
-        await client.query(
-          `UPDATE assessments SET is_final = false WHERE activity_id = $1 AND is_final`,
-          [req.params.id]
-        );
-      }
-
       const created = await client.query(
         `INSERT INTO assessments
-           (activity_id, title, instructions, type, max_score, pass_score, max_attempts, due_at, is_final)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-         RETURNING id, title, type, max_score, pass_score, max_attempts, due_at, is_final`,
+           (activity_id, title, instructions, type, max_score, pass_score, max_attempts, due_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         RETURNING id, title, type, max_score, pass_score, max_attempts, due_at`,
         [req.params.id, b.title, b.instructions ?? null, b.type,
-         b.maxScore, b.passScore, b.maxAttempts, b.dueAt ?? null, b.isFinal]
+         b.maxScore, b.passScore, b.maxAttempts, b.dueAt ?? null]
       );
 
       for (const [index, question] of b.questions.entries()) {
@@ -323,7 +306,7 @@ router.get(
   can('activity:update'),
   wrap(async (req, res) => {
     const assessments = await query(
-      `SELECT id, title, instructions, type, max_score, pass_score, max_attempts, due_at, is_final
+      `SELECT id, title, instructions, type, max_score, pass_score, max_attempts, due_at
          FROM assessments WHERE activity_id = $1 ORDER BY created_at`,
       [req.params.id]
     );
@@ -375,23 +358,14 @@ router.patch(
     }
 
     const assessment = await withTransaction(async (client) => {
-      if (b.isFinal) {
-        await client.query(
-          `UPDATE assessments SET is_final = false
-            WHERE activity_id = $1 AND is_final AND id <> $2`,
-          [req.params.id, req.params.assessmentId]
-        );
-      }
-
       const updated = await client.query(
         `UPDATE assessments
             SET title = $3, instructions = $4, type = $5,
-                max_score = $6, pass_score = $7, max_attempts = $8, due_at = $9,
-                is_final = $10
+                max_score = $6, pass_score = $7, max_attempts = $8, due_at = $9
           WHERE id = $1 AND activity_id = $2
-         RETURNING id, title, type, max_score, pass_score, max_attempts, due_at, is_final`,
+         RETURNING id, title, type, max_score, pass_score, max_attempts, due_at`,
         [req.params.assessmentId, req.params.id, b.title, b.instructions ?? null,
-         b.type, b.maxScore, b.passScore, b.maxAttempts, b.dueAt ?? null, b.isFinal]
+         b.type, b.maxScore, b.passScore, b.maxAttempts, b.dueAt ?? null]
       );
       if (!updated.rows[0]) throw notFound('Assessment');
 
